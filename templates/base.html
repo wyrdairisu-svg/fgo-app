@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHALDEA TERMINAL</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Orbitron font to headings for extra sci-fi feel */
+        .brand,
+        h1,
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">CHALDEA /// TERMINAL</div>
+            <nav>
+                <a href="{{ url_for('index') }}">ホーム</a>
+                <a href="{{ url_for('servant_list') }}">サーヴァント</a>
+                <a href="{{ url_for('ce_list') }}">概念礼装</a>
+                <a href="{{ url_for('cc_list') }}">コマンドコード</a>
+                <a href="{{ url_for('material_list') }}">素材</a>
+                <a href="{{ url_for('strategy_room') }}">戦略相談室</a>
+                <a href="{{ url_for('settings_page') }}">設定</a>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+
+</html>

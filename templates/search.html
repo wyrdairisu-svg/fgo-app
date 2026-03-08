@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="search-container">
+    <form action="{{ url_for('search') }}" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="サーヴァント名で検索...">
+        <button type="submit" class="btn">再スキャン</button>
+    </form>
+</div>
+
+{% if query %}
+<h2>/// スキャン結果: "{{ query }}"</h2>
+
+{% if results %}
+<p style="margin-bottom: 20px; color: var(--primary-color);">一致する霊基が {{ results|length }} 件見つかりました。</p>
+<div class="servant-grid">
+    {% for servant in results %}
+    <div class="chaldea-card servant-item">
+        <a href="{{ url_for('servant_detail', servant_id=servant['id']) }}"
+            style="display: block; text-decoration: none; color: inherit;">
+            <img src="{{ servant['face_url'] }}" alt="{{ servant['name'] }}" class="servant-face">
+            <div class="servant-info">
+                <h3>{{ servant['name'] }}</h3>
+                <p>{{ servant['class_name'] }} - ☆{{ servant['rarity'] }}</p>
+                <p>No. {{ servant['collection_no'] }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="chaldea-card" style="text-align: center; padding: 50px;">
+    <p style="font-size: 1.2rem; color: #ff5555;">該当なし</p>
+    <p>指定された霊基はアーカイブに存在しません。</p>
+</div>
+{% endif %}
+
+{% else %}
+<div style="text-align: center; margin-top: 50px;">
+    <p>検索クエリを入力してください。</p>
+</div>
+{% endif %}
+{% endblock %}

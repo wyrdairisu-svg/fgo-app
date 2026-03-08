@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="color: #aaa;">/// 素材アイテムリスト</h2>
+</div>
+
+<div class="search-container">
+    <form action="{{ url_for('material_list') }}" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="素材名で検索...">
+        <button type="submit" class="btn">フィルター</button>
+    </form>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px;">
+    {% for item in results %}
+    <div class="chaldea-card"
+        style="padding: 10px; text-align: center; height: auto; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+        <img src="{{ item['icon_url'] }}" alt="{{ item['name'] }}"
+            style="width: 60px; height: 60px; margin-bottom: 5px;">
+        <div
+            style="font-size: 0.8rem; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">
+            {{ item['name'] }}
+        </div>
+        <div style="font-size: 0.7rem; color: #888;">ID: {{ item['id'] }}</div>
+
+        {% if item['drops'] %}
+        <div
+            style="margin-top: 10px; width: 100%; text-align: left; font-size: 0.7rem; background: #f0f0f0; padding: 5px; border-radius: 4px;">
+            <div style="font-weight: bold; margin-bottom: 2px; color: #555;">周回推奨:</div>
+            {% for drop in item['drops'] %}
+            <div style="margin-bottom: 2px; border-bottom: 1px dashed #ccc; padding-bottom: 1px;">
+                <span style="color: #0066cc;">{{ drop['quest_name'] }}</span>
+                <span style="color: #666; float: right;">AP{{ drop['ap'] }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="margin-top: 10px; font-size: 0.7rem; color: #ccc;">
+            ドロップ情報なし
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if not results %}
+<div class="chaldea-card" style="text-align: center; padding: 50px;">
+    <p>表示可能なデータがありません。</p>
+</div>
+{% endif %}
+{% endblock %}

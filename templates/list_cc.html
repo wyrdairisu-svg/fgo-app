@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="color: #aa88ff;">/// コマンドコードアーカイブ</h2>
+</div>
+
+<div class="search-container">
+    <form action="{{ url_for('cc_list') }}" method="get" class="filter-form">
+        <div class="search-bar">
+            <input type="text" name="q" value="{{ query }}" placeholder="コマンドコード名で検索...">
+            <button type="submit" class="btn">フィルター</button>
+        </div>
+
+        <div class="filter-options"
+            style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+            <!-- Categories: Card Types -->
+            {% set cards = ['Arts', 'Buster', 'Quick'] %}
+            {% for opt in cards %}
+            <label class="checkbox-label"
+                style="background: rgba(50, 50, 100, 0.4); padding: 5px 10px; border-radius: 4px; border: 1px solid; border-color: #66a; cursor: pointer;">
+                <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                    current_filters %}checked{% endif %}> {{ opt }}
+            </label>
+            {% endfor %}
+
+            <!-- Categories: Damage/Crit -->
+            {% set dmgs = ['クリティカル威力', 'スター発生率', 'スター集中度', '特攻'] %}
+            {% for opt in dmgs %}
+            <label class="checkbox-label"
+                style="background: rgba(100, 50, 50, 0.4); padding: 5px 10px; border-radius: 4px; border: 1px solid; border-color: #a66; cursor: pointer;">
+                <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                    current_filters %}checked{% endif %}> {{ opt }}
+            </label>
+            {% endfor %}
+
+            <!-- Categories: Support/Status -->
+            {% set supps = ['HP回復', '弱体解除', '強化解除', '毒', '火傷', '呪い', '蝕毒', '延焼', '呪厄'] %}
+            {% for opt in supps %}
+            <label class="checkbox-label"
+                style="background: rgba(80, 80, 80, 0.4); padding: 5px 10px; border-radius: 4px; border: 1px solid; border-color: #888; cursor: pointer;">
+                <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                    current_filters %}checked{% endif %}> {{ opt }}
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+
+<div class="servant-grid">
+    {% for item in results %}
+    <div class="chaldea-card servant-item"
+        style="height: auto; min-height: 280px; display: flex; flex-direction: column;">
+        <div style="text-align: center; flex: 0 0 auto;">
+            <img src="{{ item['icon_url'] }}" alt="{{ item['name'] }}" class="servant-face" style="border-radius: 4px;">
+            <div class="servant-info">
+                <h3 style="font-size: 0.9rem; margin: 5px 0;">{{ item['name'] }}</h3>
+                <p style="color: #aa88ff; font-size: 0.8rem; margin: 0;">☆{{ item['rarity'] }}</p>
+            </div>
+        </div>
+        <div
+            style="padding: 8px; font-size: 0.75rem; color: #ddd; text-align: left; border-top: 1px solid #444; margin-top: 5px; flex: 1 1 auto;">
+            {{ item['effect'] | replace('\n', '<br>') | safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not results %}
+<div class="chaldea-card" style="text-align: center; padding: 50px;">
+    <p>表示可能なデータがありません。</p>
+</div>
+{% endif %}
+{% endblock %}

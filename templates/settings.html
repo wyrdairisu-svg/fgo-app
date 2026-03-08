@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 class="section-title">/// システム設定</h2>
+</div>
+
+<div class="chaldea-card" style="max-width: 600px; margin: 0 auto; padding: 30px;">
+
+    <div style="margin-bottom: 25px;">
+        <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px;">マスター情報設定</h3>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label for="master_name_input" style="color: #aaa;">マスター名 (名のみ)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="master_name_input" value="{{ master_name }}"
+                    style="flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #61dafb; color: white; border-radius: 4px;">
+                <button class="btn" onclick="saveSettings()">変更保存</button>
+            </div>
+            <p style="font-size: 0.8em; color: #666;">※ アプリ内では「マスター [名前]」と呼称されます。</p>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+        <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px;">AI連携設定 (Gemini API)</h3>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label for="api_key_input" style="color: #aaa;">Gemini API Key</label>
+            <input type="password" id="api_key_input" value="{{ api_key }}" placeholder="AIza..."
+                style="padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #61dafb; color: white; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #666;">※ 入力がない場合、簡易応答モードで動作します。<br>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #61dafb;">APIキーの取得はこちら
+                    (Google AI Studio)</a>
+            </p>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+        <h3 style="border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px;">データベース管理</h3>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="color: #aaa; font-size: 0.9em;">AtlasAcademy APIから最新データを取得し、データベースを更新します（差分のみ）。</p>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="btn" style="background: #2a9d8f; border-color: #2a9d8f;"
+                    onclick="updateDatabase()">データベース更新(差分のみ)</button>
+                <div style="font-size: 0.85em; color: #aaa;">
+                    最終更新確認日: <span style="color: #fff; font-weight: bold;">{{ last_updated }}</span>
+                </div>
+            </div>
+
+            <div id="update-logs" style="
+                margin-top: 10px; 
+                background: rgba(0,0,0,0.5); 
+                padding: 10px; 
+                border-radius: 4px; 
+                color: #ccc; 
+                font-family: monospace; 
+                font-size: 0.8em; 
+                max-height: 200px; 
+                overflow-y: auto;
+                display: none;">
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="btn" style="width: 100%; padding: 12px; font-size: 1.1em;"
+            onclick="saveSettings()">全設定を保存</button>
+    </div>
+
+    <div id="status-msg" style="margin-top: 15px; text-align: center; color: #4a4; height: 20px;"></div>
+</div>
+
+<script>
+    function saveSettings() {
+        const name = document.getElementById('master_name_input').value;
+        const apiKey = document.getElementById('api_key_input').value;
+        const status = document.getElementById('status-msg');
+
+        fetch('/api/update_settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                master_name: name,
+                gemini_api_key: apiKey
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    status.textContent = "設定を保存しました。";
+                    setTimeout(() => status.textContent = "", 3000);
+                } else {
+                    status.style.color = "#a44";
+                    status.textContent = "保存に失敗しました。";
+                }
+            });
+    }
+
+    function updateDatabase() {
+        const logDiv = document.getElementById('update-logs');
+        logDiv.style.display = 'block';
+        logDiv.innerHTML = "更新処理を開始中...<br>";
+
+        // ボタンを無効化
+        const btn = document.querySelector('button[onclick="updateDatabase()"]');
+        btn.disabled = true;
+        btn.textContent = "更新中...";
+
+        fetch('/api/update_database', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.textContent = "データベース更新 (差分のみ)";
+
+                if (data.status === 'success') {
+                    // ログを表示
+                    logDiv.innerHTML = "";
+                    data.logs.forEach(line => {
+                        logDiv.innerHTML += line + "<br>";
+                    });
+                    logDiv.scrollTop = logDiv.scrollHeight;
+                } else {
+                    logDiv.innerHTML += `<span style="color: #ff6b6b">エラーが発生しました: ${data.message}</span>`;
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.textContent = "データベース更新 (差分のみ)";
+                logDiv.innerHTML += `<span style="color: #ff6b6b">通信エラーが発生しました: ${err}</span>`;
+            });
+    }
+
+</script>
+{% endblock %}

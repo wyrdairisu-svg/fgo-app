@@ -1,0 +1,581 @@
+--- Servant ID: 104800 (カルナ〔サンタ〕) ---
+[
+  {
+    "id": 104801,
+    "num": 1,
+    "npNum": 1,
+    "card": "3",
+    "name": "聖人連続拳",
+    "originalName": "聖人連続拳",
+    "ruby": "ウィニング・アルカプトラ",
+    "icon": "https://static.atlasacademy.io/JP/Servants/Commands/104800/card_servant_np.png",
+    "rank": "A",
+    "type": "対人宝具",
+    "effectFlags": [
+      "attackEnemyOne"
+    ],
+    "detail": "自身のQuickカード性能をアップ(1ターン)<オーバーチャージで効果アップ> ＋ 敵単体のガッツ状態を解除＆超強力な攻撃",
+    "unmodifiedDetail": "自身のQuickカード性能をアップ(1ターン)<オーバーチャージで効果アップ> ＋ 敵単体のガッツ状態を解除＆超強力な攻撃[{0}]",
+    "npGain": {
+      "buster": [
+        78,
+        78,
+        78,
+        78,
+        78
+      ],
+      "arts": [
+        78,
+        78,
+        78,
+        78,
+        78
+      ],
+      "quick": [
+        78,
+        78,
+        78,
+        78,
+        78
+      ],
+      "extra": [
+        78,
+        78,
+        78,
+        78,
+        78
+      ],
+      "defence": [
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      "np": [
+        78,
+        78,
+        78,
+        78,
+        78
+      ]
+    },
+    "npDistribution": [
+      2,
+      5,
+      8,
+      11,
+      13,
+      16,
+      19,
+      26
+    ],
+    "svtId": 104800,
+    "strengthStatus": 0,
+    "priority": 101,
+    "condQuestId": 0,
+    "condQuestPhase": 0,
+    "releaseConditions": [],
+    "individuality": [
+      {
+        "id": 3000,
+        "name": "attackPhysical"
+      },
+      {
+        "id": 4003,
+        "name": "cardQuick"
+      },
+      {
+        "id": 4007,
+        "name": "cardNP"
+      },
+      {
+        "id": 4102,
+        "name": "stNP"
+      }
+    ],
+    "npSvts": [
+      {
+        "svtId": 104800,
+        "num": 1,
+        "npNum": 1,
+        "priority": 101,
+        "damage": [
+          2,
+          5,
+          8,
+          11,
+          13,
+          16,
+          19,
+          26
+        ],
+        "strengthStatus": 0,
+        "flag": 0,
+        "imageIndex": 0,
+        "condQuestId": 0,
+        "condQuestPhase": 0,
+        "condLv": 0,
+        "condFriendshipRank": 0,
+        "motion": 50,
+        "card": "3",
+        "releaseConditions": []
+      }
+    ],
+    "script": {},
+    "functions": [
+      {
+        "funcId": 101,
+        "funcType": "addStateShort",
+        "funcTargetType": "self",
+        "funcTargetTeam": "playerAndEnemy",
+        "funcPopupText": "クイックアップ",
+        "funcPopupIcon": "https://static.atlasacademy.io/JP/BuffIcons/bufficon_312.png",
+        "functvals": [],
+        "overWriteTvalsList": [],
+        "funcquestTvals": [],
+        "script": {},
+        "funcGroup": [],
+        "buffs": [
+          {
+            "id": 100,
+            "name": "Quickアップ",
+            "originalName": "Quickアップ",
+            "detail": "Quickカードの性能をアップ",
+            "icon": "https://static.atlasacademy.io/JP/BuffIcons/bufficon_312.png",
+            "type": "upCommandall",
+            "buffGroup": 0,
+            "script": {},
+            "originalScript": {},
+            "vals": [
+              {
+                "id": 3004,
+                "name": "buffPositiveEffect"
+              },
+              {
+                "id": 3006,
+                "name": "buffIncreaseDamage"
+              },
+              {
+                "id": 3094,
+                "name": "quickBuff"
+              }
+            ],
+            "tvals": [
+              {
+                "id": 5000,
+                "name": "canBeInBattle"
+              },
+              {
+                "id": 4003,
+                "name": "cardQuick"
+              }
+            ],
+            "ckSelfIndv": [
+              {
+                "id": 4003,
+                "name": "cardQuick"
+              }
+            ],
+            "ckOpIndv": [],
+            "maxRate": 5000
+          }
+        ],
+        "svals": [
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 200
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 200
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 200
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 200
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 200
+          }
+        ],
+        "svals2": [
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 250
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 250
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 250
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 250
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 250
+          }
+        ],
+        "svals3": [
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 300
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 300
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 300
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 300
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 300
+          }
+        ],
+        "svals4": [
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 350
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 350
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 350
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 350
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 350
+          }
+        ],
+        "svals5": [
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 400
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 400
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 400
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 400
+          },
+          {
+            "Rate": 1000,
+            "Turn": 1,
+            "Count": -1,
+            "Value": 400
+          }
+        ]
+      },
+      {
+        "funcId": 1258,
+        "funcType": "subState",
+        "funcTargetType": "enemy",
+        "funcTargetTeam": "playerAndEnemy",
+        "funcPopupText": "ガッツ解除",
+        "functvals": [],
+        "overWriteTvalsList": [],
+        "funcquestTvals": [],
+        "script": {
+          "funcIndividuality": [
+            {
+              "id": 3138,
+              "name": "unknown"
+            }
+          ]
+        },
+        "funcGroup": [],
+        "traitVals": [
+          {
+            "id": 3024,
+            "name": "buffGuts"
+          }
+        ],
+        "buffs": [],
+        "svals": [
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          }
+        ],
+        "svals2": [
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          }
+        ],
+        "svals3": [
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          }
+        ],
+        "svals4": [
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          }
+        ],
+        "svals5": [
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          },
+          {
+            "Rate": 1000
+          }
+        ]
+      },
+      {
+        "funcId": 12,
+        "funcType": "damageNp",
+        "funcTargetType": "enemy",
+        "funcTargetTeam": "playerAndEnemy",
+        "funcPopupText": "なし",
+        "functvals": [],
+        "overWriteTvalsList": [],
+        "funcquestTvals": [],
+        "script": {},
+        "funcGroup": [],
+        "buffs": [],
+        "svals": [
+          {
+            "Rate": 1000,
+            "Value": 12000
+          },
+          {
+            "Rate": 1000,
+            "Value": 16000
+          },
+          {
+            "Rate": 1000,
+            "Value": 18000
+          },
+          {
+            "Rate": 1000,
+            "Value": 19000
+          },
+          {
+            "Rate": 1000,
+            "Value": 20000
+          }
+        ],
+        "svals2": [
+          {
+            "Rate": 1000,
+            "Value": 12000
+          },
+          {
+            "Rate": 1000,
+            "Value": 16000
+          },
+          {
+            "Rate": 1000,
+            "Value": 18000
+          },
+          {
+            "Rate": 1000,
+            "Value": 19000
+          },
+          {
+            "Rate": 1000,
+            "Value": 20000
+          }
+        ],
+        "svals3": [
+          {
+            "Rate": 1000,
+            "Value": 12000
+          },
+          {
+            "Rate": 1000,
+            "Value": 16000
+          },
+          {
+            "Rate": 1000,
+            "Value": 18000
+          },
+          {
+            "Rate": 1000,
+            "Value": 19000
+          },
+          {
+            "Rate": 1000,
+            "Value": 20000
+          }
+        ],
+        "svals4": [
+          {
+            "Rate": 1000,
+            "Value": 12000
+          },
+          {
+            "Rate": 1000,
+            "Value": 16000
+          },
+          {
+            "Rate": 1000,
+            "Value": 18000
+          },
+          {
+            "Rate": 1000,
+            "Value": 19000
+          },
+          {
+            "Rate": 1000,
+            "Value": 20000
+          }
+        ],
+        "svals5": [
+          {
+            "Rate": 1000,
+            "Value": 12000
+          },
+          {
+            "Rate": 1000,
+            "Value": 16000
+          },
+          {
+            "Rate": 1000,
+            "Value": 18000
+          },
+          {
+            "Rate": 1000,
+            "Value": 19000
+          },
+          {
+            "Rate": 1000,
+            "Value": 20000
+          }
+        ]
+      }
+    ]
+  }
+]

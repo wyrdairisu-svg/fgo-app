@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="color: #61dafb;">/// サーヴァントデータベース</h2>
+</div>
+
+<div class="search-container">
+    <form action="{{ url_for('servant_list') }}" method="get" class="filter-form">
+        <div class="search-bar">
+            <input type="text" name="q" value="{{ query }}" placeholder="サーヴァント名で検索...">
+            <button type="submit" class="btn">フィルター</button>
+        </div>
+
+        <div class="filter-options"
+            style="margin-top: 15px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+
+            <!-- Row 1: NP Card & Type -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                <span style="color: #888; font-size: 0.9em; align-self: center;">宝具:</span>
+
+                <!-- Cards -->
+                {% set cards = ['Buster', 'Arts', 'Quick'] %}
+                {% for opt in cards %}
+                <label class="checkbox-label"
+                    style="background: rgba(50, 50, 100, 0.4); border-color: {% if opt=='Buster' %}#a44{% elif opt=='Arts' %}#44a{% else %}#4a4{% endif %};">
+                    <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                        current_filters %}checked{% endif %}> {{ opt }}
+                </label>
+                {% endfor %}
+
+                <span style="border-right: 1px solid #444; margin: 0 5px;"></span>
+
+                <!-- Types -->
+                {% set types = ['全体', '単体', '補助'] %}
+                {% for opt in types %}
+                <label class="checkbox-label" style="background: rgba(80, 80, 80, 0.4); border-color: #888;">
+                    <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                        current_filters %}checked{% endif %}> {{ opt }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Row 1.5: Rarity -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 5px;">
+                <span style="color: #888; font-size: 0.9em; align-self: center;">レアリティ:</span>
+                {% set rarities = [5, 4, 3, 2, 1, 0] %}
+                {% for r in rarities %}
+                <label class="checkbox-label"
+                    style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700;">
+                    <input type="checkbox" name="filters" value="{{ r }}" onchange="this.form.submit()" {% if r|string
+                        in current_filters %}checked{% endif %}> ★{{ r }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Row 2: Classes (Standard) -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                <span style="color: #888; font-size: 0.9em; align-self: center;">クラス:</span>
+                {% set std_classes = ['セイバー', 'アーチャー', 'ランサー', 'ライダー', 'キャスター', 'アサシン', 'バーサーカー'] %}
+                {% for opt in std_classes %}
+                <label class="checkbox-label"
+                    style="background: rgba(0,0,0,0.4); border-color: #aaa; font-size: 0.85em; padding: 4px 8px;">
+                    <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                        current_filters %}checked{% endif %}> {{ opt }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Row 3: Classes (Extra) -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 5px;">
+                {% set extra_classes = ['シールダー', 'シールダーパラディーン', 'ルーラー', 'アヴェンジャー', 'アルターエゴ', 'ムーンキャンサー', 'フォーリナー',
+                'プリテンダー', 'ビースト', 'アンビースト'] %}
+                {% for opt in extra_classes %}
+                <label class="checkbox-label"
+                    style="background: rgba(50, 0, 50, 0.4); border-color: #a8a; font-size: 0.85em; padding: 4px 8px;">
+                    <input type="checkbox" name="filters" value="{{ opt }}" onchange="this.form.submit()" {% if opt in
+                        current_filters %}checked{% endif %}> {{ opt }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="servant-grid">
+    {% for servant in results %}
+    <div class="chaldea-card servant-item">
+        <a href="{{ url_for('servant_detail', servant_id=servant['id']) }}"
+            style="display: block; text-decoration: none; color: inherit;">
+            <div style="position: relative; text-align: center;">
+                <img src="{{ servant['face_url'] }}" alt="{{ servant['name'] }}" class="servant-face">
+                <!-- Rarity Star -->
+                <div
+                    style="position: absolute; bottom: -10px; right: 0; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 10px; font-size: 0.8em; color: #ffaa00;">
+                    ☆{{ servant['rarity'] }}
+                </div>
+            </div>
+            <div class="servant-info">
+                <h3 style="margin: 10px 0 5px;">{{ servant['name'] }}</h3>
+                <p style="color: #aaa; font-size: 0.85rem;">{{ servant['class_name'] }}</p>
+                <p style="font-size: 0.75rem; color: #666;">No. {{ servant['collection_no'] }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not results %}
+<div class="chaldea-card" style="text-align: center; padding: 50px;">
+    {% if not query and not current_filters %}
+    <p style="color: #888;">検索キーワードを入力するか、フィルターを選択してください。</p>
+    {% else %}
+    <p>条件に一致するサーヴァントが見つかりません。</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

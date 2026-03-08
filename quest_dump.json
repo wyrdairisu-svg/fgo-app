@@ -1,0 +1,58 @@
+{
+  "id": 93000001,
+  "name": "屋敷跡",
+  "originalName": "屋敷跡",
+  "type": "free",
+  "flags": [
+    "displayLoopmark"
+  ],
+  "consumeType": "ap",
+  "consume": 3,
+  "consumeItem": [],
+  "afterClear": "repeatLast",
+  "recommendLv": "1",
+  "spotId": 10001,
+  "spotName": "未確認座標Ｘ－Ａ",
+  "warId": 100,
+  "warLongName": "特異点F\n炎上汚染都市 冬木",
+  "chapterId": 0,
+  "chapterSubId": 1,
+  "chapterSubStr": "",
+  "giftIcon": "https://static.atlasacademy.io/JP/Items/6.png",
+  "gifts": [
+    {
+      "id": 101,
+      "type": "item",
+      "objectId": 2,
+      "priority": 0,
+      "num": 1,
+      "giftAdds": []
+    }
+  ],
+  "releaseConditions": [
+    {
+      "type": "questClear",
+      "targetId": 1000001,
+      "value": 0,
+      "closedMessage": ""
+    }
+  ],
+  "releaseOverwrites": [],
+  "presents": [],
+  "phases": [
+    1,
+    2,
+    3
+  ],
+  "phasesWithEnemies": [
+    1,
+    2,
+    3
+  ],
+  "phasesNoBattle": [],
+  "phaseScripts": [],
+  "priority": 499999,
+  "noticeAt": 946652400,
+  "openedAt": 946652400,
+  "closedAt": 1893423600
+}

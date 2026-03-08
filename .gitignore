@@ -1,0 +1,42 @@
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# App building and distributions
+build/
+dist/
+*.spec
+*.zip
+*.exe
+
+# Cache and Logs
+cache/
+*.log
+
+# User/Local Data
+user_servant_state.json
+settings.json
+
+# Temporary / Debug text output files
+# Only ignoring the generic ones, keeping requirements.txt and README.txt
+*output.txt
+dump*.txt
+inspect*.txt
+list_tables.txt
+verify*.txt
+skadi_search.txt
+cols.txt
+
+# Editor / AI generated
+.claude/
+.vscode/
+.idea/

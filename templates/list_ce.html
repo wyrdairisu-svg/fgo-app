@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="color: #ffaa00;">/// 概念礼装アーカイブ</h2>
+</div>
+
+<div class="chaldea-card" style="margin-bottom: 20px;">
+    <h3 style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 5px;">概念礼装検索</h3>
+    <form method="GET" action="/craft_essences">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <input type="text" name="q" value="{{ query }}" placeholder="名称・効果で検索..."
+                style="flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #61dafb; color: white;">
+            <button type="submit" class="btn">検索 / フィルター適用</button>
+        </div>
+
+        <div class="filter-options" style="display: flex; flex-direction: column; gap: 10px;">
+
+            <!-- NP Charge -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">NPチャージ:</span>
+                {% set np_opts = [('np_50plus', '50%+'), ('np_80plus', '80%+'), ('np_100', '100%'), ('np_charge_exist',
+                'チャージ有')] %}
+                {% for val, label in np_opts %}
+                <label class="checkbox-label" style="background: rgba(0, 100, 255, 0.2); border-color: #00aaff;">
+                    <input type="checkbox" name="filters" value="{{ val }}" onchange="this.form.submit()" {% if val in
+                        current_filters %}checked{% endif %}> {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Stats -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">ステータス:</span>
+                {% set stat_opts = [('stat_atk', 'ATK特化'), ('stat_hp', 'HP特化'), ('stat_balance', 'バランス')] %}
+                {% for val, label in stat_opts %}
+                <label class="checkbox-label" style="background: rgba(255, 50, 50, 0.2); border-color: #ff4444;">
+                    <input type="checkbox" name="filters" value="{{ val }}" onchange="this.form.submit()" {% if val in
+                        current_filters %}checked{% endif %}> {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Tactics -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">戦術効果:</span>
+                {% set tac_opts = [
+                ('tac_ignore_def', '防御無視'), ('tac_taunt', 'タゲ集中'),
+                ('tac_on_death', '退場時'), ('tac_demerit', 'デメリット'), ('tac_oc_up', 'OC増加')
+                ] %}
+                {% for val, label in tac_opts %}
+                <label class="checkbox-label" style="background: rgba(150, 0, 255, 0.2); border-color: #aa44ff;">
+                    <input type="checkbox" name="filters" value="{{ val }}" onchange="this.form.submit()" {% if val in
+                        current_filters %}checked{% endif %}> {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Traits -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">特攻付与:</span>
+                {% set trait_opts = [
+                ('trait_divine', '神性'), ('trait_humanoid', '人型'), ('trait_dragon', '竜'),
+                ('trait_demonic', '魔性'), ('trait_undead', '死霊'), ('trait_king', '王')
+                ] %}
+                {% for val, label in trait_opts %}
+                <label class="checkbox-label" style="background: rgba(255, 150, 0, 0.2); border-color: #ffaa00;">
+                    <input type="checkbox" name="filters" value="{{ val }}" onchange="this.form.submit()" {% if val in
+                        current_filters %}checked{% endif %}> {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Bonus -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">ボーナス:</span>
+                {% set bonus_opts = [('bonus_bond', '絆'), ('bonus_exp', 'EXP'), ('bonus_qp', 'QP')] %}
+                {% for val, label in bonus_opts %}
+                <label class="checkbox-label" style="background: rgba(0, 255, 100, 0.15); border-color: #00ff66;">
+                    <input type="checkbox" name="filters" value="{{ val }}" onchange="this.form.submit()" {% if val in
+                        current_filters %}checked{% endif %}> {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- Card Type (Added) -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                <span style="color: #61dafb; font-size: 0.9em; min-width: 60px;">カード:</span>
+                {% set card_opts = ['Buster', 'Arts', 'Quick'] %}
+                {% for c in card_opts %}
+                <label class="checkbox-label" style="background: rgba(100, 100, 100, 0.2); border-color: #888;">
+                    <input type="checkbox" name="filters" value="{{ c }}" onchange="this.form.submit()" {% if c in
+                        current_filters %}checked{% endif %}> {{ c }}
+                </label>
+                {% endfor %}
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div class="servant-grid">
+    {% for item in results %}
+    <div class="chaldea-card servant-item"
+        style="height: auto; min-height: 280px; display: flex; flex-direction: column;">
+        <div style="text-align: center; flex: 0 0 auto;">
+            <img src="{{ item['icon_url'] }}" alt="{{ item['name'] }}" class="servant-face" style="border-radius: 4px;">
+            <div class="servant-info">
+                <h3 style="font-size: 0.9rem; margin: 5px 0;">{{ item['name'] }}</h3>
+                <p style="color: #ffaa00; font-size: 0.8rem; margin: 0;">☆{{ item['rarity'] }}</p>
+            </div>
+        </div>
+        <div
+            style="padding: 8px; font-size: 0.75rem; color: #ddd; text-align: left; border-top: 1px solid #444; margin-top: 5px; flex: 1 1 auto;">
+            {{ item['effect'] | replace('\n', '<br>') | safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not results %}
+<div class="chaldea-card" style="text-align: center; padding: 50px;">
+    {% if not query %}
+    <p style="color: #61dafb;">検索ワードを入力してください。</p>
+    {% else %}
+    <p>条件に一致する概念礼装は見つかりませんでした。</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

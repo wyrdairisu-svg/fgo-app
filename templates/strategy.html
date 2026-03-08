@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+    /* 2x2 Grid Layout */
+    .strategy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 40vh 45vh;
+        /* Adjustable height */
+        gap: 20px;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Panel Base Style */
+    .strategy-panel {
+        background: rgba(0, 20, 40, 0.9);
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel-header {
+        font-weight: bold;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Top-Left: Summary (Blue) */
+    #panel-summary {
+        border-color: #61dafb;
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    #panel-summary .panel-header {
+        color: #61dafb;
+    }
+
+    /* Summary & Servant Content Icons (Inline) */
+    #summary-content img,
+    #servant-content img {
+        width: 1.4em;
+        height: 1.4em;
+        vertical-align: middle;
+        margin-right: 4px;
+        border-radius: 2px;
+    }
+
+    /* Top-Right: Input (Green/White) */
+    #panel-input {
+        border-color: #ffffff;
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+
+    #panel-input .panel-header {
+        color: #ffffff;
+    }
+
+    /* Bottom-Left: Servant Details (Purple) */
+    #panel-servant {
+        border-color: #bb86fc;
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+
+    #panel-servant .panel-header {
+        color: #bb86fc;
+    }
+
+    /* Bottom-Right: Party (Orange) */
+    #panel-party {
+        border-color: #ffaa00;
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+    }
+
+    #panel-party .panel-header {
+        color: #ffaa00;
+    }
+
+    /* Icon Styling */
+    #panel-party table img,
+    #panel-servant table img {
+        width: 45px;
+        height: 45px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    /* Responsive: Stack on mobile */
+    @media (max-width: 900px) {
+        .strategy-grid {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+
+        .strategy-panel {
+            height: 400px;
+            /* Fixed height for mobile sections */
+        }
+    }
+</style>
+
+<div style="text-align: center; margin-bottom: 10px;">
+    <p style="color: var(--primary-color); margin: 0; font-size: 0.9em;">TRISMEGISTUS Ⅱ STRATEGY ROOM</p>
+</div>
+
+<div class="strategy-grid">
+
+    <!-- Top-Left: Summary Window -->
+    <div id="panel-summary" class="strategy-panel">
+        <div class="panel-header">
+            <span>/// SUMMARY & CHAT</span>
+            <span style="font-size:0.8em; opacity:0.7;">簡易回答</span>
+        </div>
+        <div id="summary-content" style="font-size: 0.95em; line-height: 1.5;">
+            <div style="opacity: 0.6; font-style: italic;">
+                (ここにAIからの概要回答が表示されます)
+            </div>
+        </div>
+    </div>
+
+    <!-- Top-Right: Input Window -->
+    <div id="panel-input" class="strategy-panel">
+        <div class="panel-header">
+            <span>/// INPUT QUERY</span>
+            <span style="font-size:0.8em; opacity:0.7;">質問入力</span>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 15px;">
+            <p style="margin: 0; font-size: 0.9em; color: #ccc;">
+                直面しているクエストや、育成したいサーヴァントについて入力してください。<br>
+                具体的に記述すると精度が向上します。
+            </p>
+            <textarea id="user-input" placeholder="例：オベロンの運用方法と、相性の良いアタッカーを教えて"
+                style="width: 100%; height: 100px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #666; color: white; border-radius: 4px; resize: none; box-sizing: border-box;"></textarea>
+            <button id="send-btn" class="btn" style="width: 100%;">戦術解析開始</button>
+            <div id="loading"
+                style="display: none; align-items: center; justify-content: center; color: var(--primary-color);">
+                <span style="margin-right: 10px;">Calculation...</span>
+                <span class="spinner"
+                    style="width:15px; height:15px; border:2px solid var(--primary-color); border-top:2px solid transparent; border-radius:50%; animation:spin 1s linear infinite;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom-Left: Servant Details -->
+    <div id="panel-servant" class="strategy-panel">
+        <div class="panel-header">
+            <span>/// SERVANT ANALYZER</span>
+            <span style="font-size:0.8em; opacity:0.7;">詳細解説</span>
+        </div>
+        <div id="servant-content" style="font-size: 0.9em; line-height: 1.6;">
+            <div style="opacity: 0.6; font-style: italic;">
+                (解析対象サーヴァントの性能データ・強みがここに展開されます)
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom-Right: Party Analysis -->
+    <div id="panel-party" class="strategy-panel">
+        <div class="panel-header">
+            <span>/// PARTY FORMATION</span>
+            <span style="font-size:0.8em; opacity:0.7;">編成 & 運用</span>
+        </div>
+        <div id="party-content" style="font-size: 0.9em; line-height: 1.6;">
+            <div style="opacity: 0.6; font-style: italic;">
+                (推奨パーティ編成・連携シナジー・運用マニュアルがここに展開されます)
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const summaryContent = document.getElementById('summary-content');
+    const servantContent = document.getElementById('servant-content');
+    const partyContent = document.getElementById('party-content');
+    const loadingDiv = document.getElementById('loading');
+
+    function renderMarkdown(element, text) {
+        element.innerHTML = marked.parse(text);
+    }
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        // UI State: Loading
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+        sendBtn.style.display = 'none';
+        loadingDiv.style.display = 'flex';
+
+        // Clear previous except summary (maybe keep history? User asked for "Answer Window". Let's clear for now to match specific query)
+        // summaryContent.innerHTML = '...'; 
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                summaryContent.innerHTML = `<span style="color:red;">Error: ${data.error}</span>`;
+            } else if (typeof data.reply === 'object' && data.reply.query_type === 'synergy_analysis') {
+                // JSON Mode (Synergy Analysis)
+                renderSynergyMode(data.reply);
+            } else {
+                // Legacy Text Mode (Split Logic)
+                // Summary <<TACTICAL_DATA>> Servant <<PARTY_DATA>> Party
+                let summary = data.reply;
+                let servant = "";
+                let party = "";
+
+                if (typeof data.reply === 'string' && data.reply.includes('<<TACTICAL_DATA>>')) {
+                    const firstSplit = data.reply.split('<<TACTICAL_DATA>>');
+                    summary = firstSplit[0].trim();
+                    let remaining = firstSplit[1].trim();
+
+                    if (remaining.includes('<<PARTY_DATA>>')) {
+                        const secondSplit = remaining.split('<<PARTY_DATA>>');
+                        servant = secondSplit[0].trim();
+                        party = secondSplit[1].trim();
+                    } else {
+                        servant = remaining;
+                    }
+                }
+
+                // Render all panels
+                renderMarkdown(summaryContent, summary);
+
+                if (servant) {
+                    renderMarkdown(servantContent, servant);
+                } else {
+                    servantContent.innerHTML = '<span style="opacity:0.5;">(No specific servant data generated)</span>';
+                }
+
+                if (party) {
+                    renderMarkdown(partyContent, party);
+                } else {
+                    partyContent.innerHTML = '<span style="opacity:0.5;">(No party data generated)</span>';
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            summaryContent.innerHTML = '<span style="color:red;">Communication Error</span>';
+        } finally {
+            userInput.disabled = false;
+            // userInput.value = ''; // Auto clear? User might want to keep it? Usually clear.
+            sendBtn.disabled = false;
+            sendBtn.style.display = 'block';
+            loadingDiv.style.display = 'none';
+            userInput.focus();
+        }
+    }
+
+    function renderSynergyMode(data) {
+        // 1. Summary Panel
+        const summaryHtml = `
+            <div style="margin-bottom: 10px; font-size: 1.1em; font-weight: bold; color: #61dafb;">
+                ${data.summary_chat.rating ? `Rating: <span style="font-size:1.2em;">${data.summary_chat.rating}</span>` : ''} 
+            </div>
+            <div>${data.summary_chat.short_verdict}</div>
+            <hr style="border-color: #444; margin: 10px 0;">
+            <div style="font-size: 0.9em; opacity: 0.8;">Target: ${data.targets.join(' × ')}</div>
+        `;
+        summaryContent.innerHTML = summaryHtml;
+
+        // 2. Servant Analyzer (Synergy Matrix)
+        const sa = data.servant_analyzer;
+        let matrixHtml = `<h4 style="margin-top:0;">${sa.title}</h4>`;
+
+        // Vectors
+        if (sa.synergy_vectors) {
+            sa.synergy_vectors.forEach(vec => {
+                matrixHtml += `
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 10px; border-radius: 4px; border-left: 3px solid #bb86fc;">
+                    <strong style="color: #bb86fc;">${vec.label}</strong>
+                    <ul style="margin: 5px 0; padding-left: 20px;">
+                        ${vec.details.map(d => `<li>${d}</li>`).join('')}
+                    </ul>
+                </div>`;
+            });
+        }
+
+        // Shared Strength / Weakness
+        matrixHtml += `
+            <div style="margin-top: 15px;">
+                <div style="color: #4caf50; font-weight:bold;">✅ 共通の強み (Shared Strength)</div>
+                <div style="margin-left: 10px; margin-bottom: 10px;">${sa.shared_strength}</div>
+                
+                <div style="color: #f44336; font-weight:bold;">⚠️ 致命的な弱点 (Critical Weakness)</div>
+                <div style="margin-left: 10px;">${sa.critical_weakness}</div>
+            </div>
+        `;
+        renderMarkdown(servantContent, matrixHtml); // Use marked just in case, or innerHTML directly if we trust structure. 
+        // Actually matrixHtml contains HTML tags, renderMarkdown might escape them or process inside. 
+        // marked usually handles HTML fine. But explicitly:
+        servantContent.innerHTML = matrixHtml;
+
+
+        // 3. Party Formation (Optimized Plan)
+        const pf = data.party_formation;
+
+        let thirdMemberMarkup = pf.third_member_markup || pf.third_member; // Use markup if available
+        // Convert markup to HTML if it's markdown link
+        thirdMemberMarkup = marked.parseInline(thirdMemberMarkup);
+
+        let partyHtml = `
+            <h4 style="margin-top:0; color:#ffaa00;">運用コンセプト: ${pf.concept}</h4>
+            
+            <div style="background: rgba(255,170,0,0.1); padding: 10px; border: 1px solid #ffaa00; border-radius: 4px; margin-bottom: 15px;">
+                <strong style="color: #ffaa00;">✨ 推奨される3人目 (The Linker)</strong>
+                <div style="font-size: 1.1em; margin: 5px 0;">${thirdMemberMarkup}</div>
+                <div style="font-size: 0.9em; opacity: 0.9;">理由: ${pf.third_member_reason}</div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong>📦 推奨概念礼装</strong>
+                <ul style="margin: 5px 0; padding-left: 20px;">
+                    ${pf.craft_essences.map(ce => {
+            let holderHtml = marked.parseInline(ce.holder_markup || ce.holder);
+            return `<li>${holderHtml}: ${ce.recommendation}</li>`;
+        }).join('')}
+                </ul>
+            </div>
+            
+            <div>
+                <strong>⚔️ 戦術ステップ</strong>
+                <ol style="margin: 5px 0; padding-left: 20px;">
+                     ${pf.strategy_steps.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+            </div>
+        `;
+        partyContent.innerHTML = partyHtml;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keydown', (e) => {
+        // Ctrl+Enter to submit (since it is a textarea now)
+        if (e.key === 'Enter' && e.ctrlKey) sendMessage();
+    });
+
+    window.addEventListener('load', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        if (query) {
+            userInput.value = query;
+            sendMessage();
+        }
+    });
+</script>
+{% endblock %}
